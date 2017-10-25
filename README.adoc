@@ -27,7 +27,7 @@ Download the BSP source:
 % PATH=${PATH}:~/bin
 % mkdir yocto_project
 % cd yocto_project
-% repo init -u https://github.com/nutsboard/nutsboard-yocto-bsp-imx.git -b morty_4.9.11
+% repo init -u https://github.com/nutsboard/nutsboard-yocto-bsp-imx.git -b morty-4.9.11
 % repo sync
 
 
@@ -104,7 +104,7 @@ MACHINE_EXTRA_RRECOMMENDS += " \
 
 Then re-compile again!
 
-2017/03/23 Update: How to build a QT based applications
+10/25/2017 Update: How to build a QT based applications
 To download the meta-layer source of the QT (Ex: QT5)
 
 To generate the poky cross compilier environment, it's easy to use to develop applications.
