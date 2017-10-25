@@ -1,0 +1,128 @@
+= NutsBoard Yocto BSP for i.MX platforms
+
+Environment Setup
+
+[source,console]
+% sudo apt-get install gawk wget git-core diffstat unzip texinfo gcc-multilib \
+ build-essential chrpath  socat \
+ libsdl1.2-dev xterm  sed cvs subversion coreutils texi2html \
+ docbook-utils python-pysqlite2 help2man make gcc g++ desktop-file-utils \
+ libgl1-mesa-dev libglu1-mesa-dev mercurial autoconf automake groff curl lzop asciidoc
+
+For Ubuntu 12.04 host setup only:
+[source,console]
+% sudo apt-get install uboot-mkimage
+
+For Ubuntu 14.04 or later revision host setup:
+[source,console]
+% sudo apt-get install u-boot-tools
+
+
+
+To get the BSP you need to have repo installed and use it as:
+
+Download the BSP source:
+
+[source,console]
+% PATH=${PATH}:~/bin
+% mkdir yocto_project
+% cd yocto_project
+% repo init -u https://github.com/nutsboard/nutsboard-yocto-bsp-imx.git -b morty_4.9.11
+% repo sync
+
+
+
+At the end of the commands you have every metadata you need to start work with.
+
+To start a X11 based image build for NutsBoard Pistachio:
+[source,console]
+% cd <local path>/nutsboard-yocto-bsp-imx/
+% DISTRO=fsl-imx-x11 MACHINE=imx6qpistachio source nutsboard-setup-release.sh -b build-x11
+
+To start a FB based image build:
+[source,console]
+% cd <local path>/nutsboard-yocto-bsp-imx/
+% DISTRO=fsl-imx-fb MACHINE=imx6qpistachio source nutsboard-setup-release.sh -b build-x11
+
+
+
+You must specify which machine is your target at "MACHINE=" argument, and "build-x11" is your path ofbuild folder.
+
+To generate the poky cross compilier environment, it's easy to use to develop applications.
+[source,console]
+% bitbake meta-toolchain
+
+
+To generate the poky image with nutsboard customize meta-layer with qt5 based desktop.
+[source,console]
+% bitbake fsl-image-qt5-validation-imx
+
+To generate the poky image with nutsboard customize meta-layer with commandline based environment.
+[source,console]
+% bitbake core-image-minimal
+
+
+The image elements as follows:
+
+Example - Pistachio
+
+Output Path: <build path>/tmp/deploy/images/almond/
+
+Partition 1: u-boot.imx(MBR), zImage, imx6q-pistachio.dtb, uEnv.txt
+
+Partition 2: fsl-image-qt5-validation-imx-imx6qpistachio-<date>.rootfs.tar.bz2, modules.tgz
+
+SDcard/eMMC image: fsl-image-qt5-validation-imx-imx6qpistachio-<date>.rootfs.sdcard
+
+
+Installing the toolchain:
+
+Path: <build path>/build/tmp/deploy/sdk/fsl-imx-x11-glibc-x86_64-meta-toolchain-cortexa9hf-neon-toolchain-4.9.11-1.0.0.sh
+
+After Installtion, please source the environment to auto setting the poky compile environment.
+[source,console]
+% source environment-setup-cortexa9hf-neon-poky-linux-gnueabi
+
+
+An application file compile:
+[source,console]
+% $CC hello.c -o hello
+
+
+How to add additional packages, for Pistachio, we showing a simple example:
+Edit <source path>/sources/meta-nutsboard-imx-bsp-release/imx/meta-bsp/conf/machine/imx6qpistachio.conf
+[source,console]
+MACHINE_EXTRA_RRECOMMENDS += " \
+  chromium libexif \
+  openssh-sftp-server \
+  bash hostapd dnsmasq haveged iptables \
+  ethtool coreutils ppp iproute2 libsocketcan canutils util-linux \
+  minicom iw wpa-supplicant i2c-tools \
+  create-ap firmware-wg7833 uim \
+  ppp curl networkmanager \
+  "add your packages here" \
+
+Then re-compile again!
+
+2017/03/23 Update: How to build a QT based applications
+To download the meta-layer source of the QT (Ex: QT5)
+
+To generate the poky cross compilier environment, it's easy to use to develop applications.
+[source,console]
+% bitbake meta-toolchain-qt5
+
+
+Installing the qt based toolchain:
+
+Path: <build path>/build/tmp/deploy/sdk/fsl-imx-x11-glibc-x86_64-meta-toolchain-qt5-cortexa9hf-neon-toolchain-4.9.11-1.0.0.sh
+
+After Installtion, please source the environment to auto setting the poky compile environment.
+[source,console]
+% source environment-setup-cortexa9hf-neon-poky-linux-gnueabi
+
+
+A QT application project compile:
+[source,console]
+% cd <your QT project>
+% qmake
+% make
